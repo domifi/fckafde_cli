@@ -58,11 +58,11 @@ def getShort(target, delay):
 
     return extractShort(answer)
 
+try:
+    args = getArgs()
+    target = args[0]
+    delay = args[1]
 
-args = getArgs()
-target = args[0]
-delay = args[1]
-
-print(target)
-
-print(getShort(target, delay))
+    print(getShort(target, delay))
+except:
+    print('Uh, oh! Something went wrong')
