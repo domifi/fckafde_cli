@@ -4,8 +4,8 @@ An unofficial CLI tool for using the https://fckaf.de/ service. It is very good.
 ## Usage
 Install required modules:
 
-```python
+```bash
 python3 -m pip install -r requirements.txt
 ```
 
-Just type ``python3 fck.py <URL> <delay>``
+Then just type ``python3 fck.py <URL> <delay>``
