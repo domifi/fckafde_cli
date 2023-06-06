@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
-from lxml import html
-import requests
+
 import sys
+
+import requests
+from lxml import html
+
+
+def main():
+    try:
+        args = getArgs()
+        target = args[0]
+        delay = args[1]
+
+        print(getShort(target, delay))
+    except:
+        print('Uh, oh! Something went wrong')
 
 
 # gets the arguments (target and delay)
@@ -36,7 +49,7 @@ def extractShort(answer):
     ret = tree.xpath('//*[@id="link"]')
 
     return ret[0].value
-    
+
 
 # requests a html for the given target and delay
 def getShort(target, delay):
@@ -58,11 +71,6 @@ def getShort(target, delay):
 
     return extractShort(answer)
 
-try:
-    args = getArgs()
-    target = args[0]
-    delay = args[1]
 
-    print(getShort(target, delay))
-except:
-    print('Uh, oh! Something went wrong')
+if __name__ == "__main__":
+    main()
