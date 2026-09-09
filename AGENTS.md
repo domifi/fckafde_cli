@@ -8,8 +8,9 @@
 
 ## Verification
 
-- There are no linters, formatters, build steps, CI workflows, or other automated checks in this repository.
+- There are no linters, formatters, or build steps in this repository. CI runs the test workflow on pushes and pull requests.
 - Run the live integration test with `python3 -m unittest discover -s tests`; it requires network access to `https://fckaf.de/` and checks `https://example.com` with delay `9` returns `https://fckaf.de/KZu`.
+- The CI workflow is `.github/workflows/test.yaml`; Forgejo uses this file when `.forgejo/workflows` is absent. Its runner must provide the `ubuntu-latest` label and outbound network access.
 - At minimum, run `python3 -m py_compile fck.py` after Python changes.
 
 ## Implementation Constraints
