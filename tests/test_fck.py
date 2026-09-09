@@ -1,7 +1,7 @@
 import contextlib
 import io
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 from fck import getArgs, getShort
 
@@ -26,24 +26,25 @@ class FckafdeUnitTest(unittest.TestCase):
         self.assertEqual(args.target, 'https://example.com')
         self.assertEqual(args.delay, 5)
 
-    @patch('fck.requests.post')
-    @patch('fck.requests.get')
-    def test_get_short_uses_timeout_and_checks_responses(self, mock_get, mock_post):
+    @patch('fck.requests.Session')
+    def test_get_short_uses_session_timeout_and_checks_responses(self, mock_session):
+        session = Mock()
+        mock_session.return_value.__enter__.return_value = session
         homepage = Mock()
         homepage.content = b'<input id="csrf_token" value="token">'
-        homepage.cookies.get_dict.return_value = {'session': 'session-id'}
         answer = Mock()
         answer.content = b'<input id="link" value="https://fckaf.de/short">'
-        mock_get.return_value = homepage
-        mock_post.return_value = answer
+        session.get.return_value = homepage
+        session.post.return_value = answer
 
         result = getShort('https://example.com', 9)
 
         self.assertEqual(result, 'https://fckaf.de/short')
+        mock_session.assert_called_once_with()
         homepage.raise_for_status.assert_called_once_with()
         answer.raise_for_status.assert_called_once_with()
-        mock_get.assert_called_once_with('https://fckaf.de/', timeout=10)
-        mock_post.assert_called_once_with(
+        session.get.assert_called_once_with('https://fckaf.de/', timeout=10)
+        session.post.assert_called_once_with(
             'https://fckaf.de/',
             data={
                 'csrf_token': 'token',
@@ -51,9 +52,25 @@ class FckafdeUnitTest(unittest.TestCase):
                 'delay': 9,
                 'submit': 'Speichern',
             },
-            headers={'Cookie': 'session=session-id'},
             timeout=10,
         )
+        request_calls = [
+            mock_call for mock_call in session.mock_calls
+            if mock_call[0] in ('get', 'post')
+        ]
+        self.assertEqual(request_calls, [
+            call.get('https://fckaf.de/', timeout=10),
+            call.post(
+                'https://fckaf.de/',
+                data={
+                    'csrf_token': 'token',
+                    'target': 'https://example.com',
+                    'delay': 9,
+                    'submit': 'Speichern',
+                },
+                timeout=10,
+            ),
+        ])
 
 
 if __name__ == '__main__':

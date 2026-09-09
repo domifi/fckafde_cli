@@ -29,15 +29,14 @@ def getArgs(argv=None):
 
 
 # gets the necessary tokens to request a URL
-def getTokens():
-    page = requests.get('https://fckaf.de/', timeout=10)
+def getTokens(session):
+    page = session.get('https://fckaf.de/', timeout=10)
     page.raise_for_status()
     tree = html.fromstring(page.content)
 
     token = tree.xpath('//*[@id="csrf_token"]')
-    sessionID = page.cookies.get_dict()['session']
 
-    return [token[0].value, sessionID]
+    return token[0].value
 
 
 # extracts the short URL form an html
@@ -51,28 +50,24 @@ def extractShort(answer):
 
 # requests a html for the given target and delay
 def getShort(target, delay):
-    tokens = getTokens()
+    with requests.Session() as session:
+        token = getTokens(session)
 
-    options = {
-        'csrf_token': tokens[0],
-        'target': target,
-        'delay': delay,
-        'submit': 'Speichern'
-    }
+        options = {
+            'csrf_token': token,
+            'target': target,
+            'delay': delay,
+            'submit': 'Speichern'
+        }
 
-    headers = {
-        'Cookie': 'session=' + tokens[1]
-    }
+        answer = session.post(
+            'https://fckaf.de/',
+            data=options,
+            timeout=10,
+        )
+        answer.raise_for_status()
 
-    answer = requests.post(
-        'https://fckaf.de/',
-        data=options,
-        headers=headers,
-        timeout=10,
-    )
-    answer.raise_for_status()
-
-    return extractShort(answer)
+        return extractShort(answer)
 
 
 if __name__ == "__main__":

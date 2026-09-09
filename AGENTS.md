@@ -15,5 +15,5 @@
 
 ## Implementation Constraints
 
-- `getTokens()` first fetches the service homepage for both the CSRF token and session cookie; `getShort()` must submit them together in the subsequent request.
+- `getShort()` must use one `requests.Session` for the homepage GET that obtains the CSRF token and session cookie and the subsequent shortening POST.
 - `main()` reports runtime failures only as a generic stderr message; temporarily inspect or narrow exception handling when debugging failures.
