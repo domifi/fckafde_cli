@@ -1,6 +1,8 @@
 # fckafde_cli
 An unofficial CLI tool for using the https://fckaf.de/ service. It is very good. Smiley.
 
+Requires Python 3.10 or newer.
+
 ## Usage
 Install required modules:
 

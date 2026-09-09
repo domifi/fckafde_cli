@@ -2,7 +2,7 @@
 
 ## Project
 
-- This is a single-file Python 3 CLI: `fck.py`; dependencies are listed in `requirements.txt`.
+- This is a single-file Python 3.10+ CLI: `fck.py`; dependencies are listed in `requirements.txt`.
 - Install dependencies with `python3 -m pip install -r requirements.txt`.
 - Run it with `python3 fck.py <URL> [delay]`; when `delay` is omitted, the script defaults to `5`.
 
