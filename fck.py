@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import sys
 
 import requests
@@ -7,33 +8,30 @@ from lxml import html
 
 
 def main():
-    try:
-        args = getArgs()
-        target = args[0]
-        delay = args[1]
+    args = getArgs()
 
-        print(getShort(target, delay))
-    except:
-        print('Uh, oh! Something went wrong')
+    try:
+        print(getShort(args.target, args.delay))
+    except Exception:
+        print('Uh, oh! Something went wrong', file=sys.stderr)
+        return 1
+
+    return 0
 
 
 # gets the arguments (target and delay)
-def getArgs():
-    delay = 5
-    target = ''
+def getArgs(argv=None):
+    parser = argparse.ArgumentParser(description='Create a shortened fckaf.de URL.')
+    parser.add_argument('target', metavar='URL')
+    parser.add_argument('delay', nargs='?', type=int, default=5)
 
-    if len(sys.argv) == 2:
-        target = sys.argv[1]
-    elif len(sys.argv) == 3:
-        target = sys.argv[1]
-        delay = sys.argv[2]
-
-    return [target, delay]
+    return parser.parse_args(argv)
 
 
 # gets the necessary tokens to request a URL
 def getTokens():
-    page = requests.get('https://fckaf.de/')
+    page = requests.get('https://fckaf.de/', timeout=10)
+    page.raise_for_status()
     tree = html.fromstring(page.content)
 
     token = tree.xpath('//*[@id="csrf_token"]')
@@ -66,10 +64,16 @@ def getShort(target, delay):
         'Cookie': 'session=' + tokens[1]
     }
 
-    answer = requests.post('https://fckaf.de/', data=options, headers=headers)
+    answer = requests.post(
+        'https://fckaf.de/',
+        data=options,
+        headers=headers,
+        timeout=10,
+    )
+    answer.raise_for_status()
 
     return extractShort(answer)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

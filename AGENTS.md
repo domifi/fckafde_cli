@@ -16,4 +16,4 @@
 ## Implementation Constraints
 
 - `getTokens()` first fetches the service homepage for both the CSRF token and session cookie; `getShort()` must submit them together in the subsequent request.
-- `main()` catches every exception and prints only a generic error, so temporarily inspect or narrow exception handling when debugging failures.
+- `main()` reports runtime failures only as a generic stderr message; temporarily inspect or narrow exception handling when debugging failures.
