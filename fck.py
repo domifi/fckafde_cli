@@ -60,7 +60,6 @@ def getShort(target, delay):
         'target': target,
         'delay': delay,
         'submit': 'Speichern'
-        'session'
     }
 
     headers = {
