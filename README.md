@@ -8,4 +8,16 @@ Install required modules:
 python3 -m pip install -r requirements.txt
 ```
 
-Then just type ``python3 fck.py <URL> <delay>``
+Then type ``python3 fck.py <URL> [delay]``. If omitted, ``delay`` defaults to ``5``.
+
+## Tests
+
+Run the live integration test with:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+The test contacts ``https://fckaf.de/`` and requires network access. It checks
+that ``https://example.com`` with a delay of ``9`` returns
+``https://fckaf.de/KZu``.

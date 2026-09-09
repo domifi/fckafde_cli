@@ -8,8 +8,9 @@
 
 ## Verification
 
-- There are no tests, linters, formatters, build steps, CI workflows, or other automated checks in this repository.
-- At minimum, run `python3 -m py_compile fck.py` after Python changes. End-to-end execution contacts the live `https://fckaf.de/` service and requires network access.
+- There are no linters, formatters, build steps, CI workflows, or other automated checks in this repository.
+- Run the live integration test with `python3 -m unittest discover -s tests`; it requires network access to `https://fckaf.de/` and checks `https://example.com` with delay `9` returns `https://fckaf.de/KZu`.
+- At minimum, run `python3 -m py_compile fck.py` after Python changes.
 
 ## Implementation Constraints
 
