@@ -23,20 +23,27 @@ def main():
 def getArgs(argv=None):
     parser = argparse.ArgumentParser(description='Create a shortened fckaf.de URL.')
     parser.add_argument('target', metavar='URL')
-    parser.add_argument('delay', nargs='?', type=int, default=5)
+    parser.add_argument('delay', nargs='?', type=int, default=3)
 
     return parser.parse_args(argv)
 
 
 # gets the necessary tokens to request a URL
-def getTokens(session):
+def getHomepage(session):
     page = session.get('https://fckaf.de/', timeout=10)
     page.raise_for_status()
-    tree = html.fromstring(page.content)
 
-    token = tree.xpath('//*[@id="csrf_token"]')
+    return html.fromstring(page.content)
 
-    return token[0].value
+
+def getDelayOptions(tree):
+    values = tree.xpath('//*[@id="delay"]/option/@value')
+
+    return {int(value): value for value in values}
+
+
+def pickDelay(requested, options):
+    return min(options, key=lambda delay: (abs(delay - requested), delay))
 
 
 # extracts the short URL form an html
@@ -51,10 +58,24 @@ def extractShort(answer):
 # requests a html for the given target and delay
 def getShort(target, delay):
     with requests.Session() as session:
-        token = getTokens(session)
+        tree = getHomepage(session)
+
+        csrf = tree.xpath('//*[@id="csrf_token"]')[0].value
+        delays = getDelayOptions(tree)
+
+        if delays:
+            chosen = pickDelay(delay, delays)
+            if chosen != delay:
+                print(
+                    f'Requested delay of {delay} seconds is unavailable; '
+                    f'using {chosen} seconds instead.',
+                    file=sys.stderr,
+                )
+                delay = chosen
+            delay = delays[delay]
 
         options = {
-            'csrf_token': token,
+            'csrf_token': csrf,
             'target': target,
             'delay': delay,
             'submit': 'Speichern'

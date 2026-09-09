@@ -4,7 +4,7 @@
 
 - This is a single-file Python 3.10+ CLI: `fck.py`; dependencies are listed in `requirements.txt`.
 - Install dependencies with `python3 -m pip install -r requirements.txt`.
-- Run it with `python3 fck.py <URL> [delay]`; when `delay` is omitted, the script defaults to `5`.
+- Run it with `python3 fck.py <URL> [delay]`; when `delay` is omitted, the script defaults to `3`.
 
 ## Verification
 
@@ -16,4 +16,5 @@
 ## Implementation Constraints
 
 - `getShort()` must use one `requests.Session` for the homepage GET that obtains the CSRF token and session cookie and the subsequent shortening POST.
+- The homepage `<select id="delay">` defines the allowed delays; `getShort()` rounds the requested delay to the nearest allowed value, prints a stderr note when it changes it, and posts the exact option string (e.g. `09`).
 - `main()` reports runtime failures only as a generic stderr message; temporarily inspect or narrow exception handling when debugging failures.

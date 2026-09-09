@@ -10,11 +10,15 @@ Install required modules:
 python3 -m pip install -r requirements.txt
 ```
 
-Then type ``python3 fck.py <URL> [delay]``. If omitted, ``delay`` defaults to ``5``.
+Then type ``python3 fck.py <URL> [delay]``. If omitted, ``delay`` defaults to ``3``.
+
+``delay`` must match one of the seconds offered by fckaf.de (``0``, ``3``,
+``6``, ``9``, ...). Other values are rounded to the nearest offered one, and a
+note is printed to stderr.
 
 ## Nix
 
-Run without installing anything, using a local checkout:
+Run using a local copy of the repo:
 
 ```bash
 nix run . -- https://example.com [delay]
@@ -26,9 +30,8 @@ Or directly from the repository on GitHub:
 nix run github:domifi/fckafde_cli -- https://example.com [delay]
 ```
 
-As with the pip install above, ``delay`` defaults to ``5`` when omitted. This
-uses the pinned Python environment from ``flake.lock``, so no system Python or
-pip packages are needed.
+This uses the pinned Python environment from ``flake.lock``, not
+`requirements.txt`.
 
 ## Tests
 
